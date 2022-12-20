@@ -55,7 +55,7 @@ impl fmt::Display for Ordering {
 			Self::Equal => write!(f, "equal"),
 			Self::Ascending => write!(f, "ascending"),
 			Self::Descending => write!(f, "descending"),
-			Self::Unsorted => write!(f, "unsorted")
+			Self::Unsorted => write!(f, "unsorted"),
 		}
 	}
 }
@@ -77,6 +77,26 @@ pub fn get_ordering<T: core::cmp::PartialOrd>(a: &[T]) -> Ordering {
 		return Ordering::Descending;
 	}
 	Ordering::Unsorted
+}
+
+/// Uses `PartialOrd` trait to determine the ordering of a generic iterator.
+///
+/// Returns `Ordering::Undefined` if `it.count() < 2`.
+fn get_ordering_iter<T: core::cmp::PartialOrd>(
+	it: &mut /* is there some way of avoiding `mut`? */ dyn Iterator<Item = T>,
+) -> Ordering {
+	let mut out = Ordering::Undefined;
+	let mut previous: Option<T> = None;
+	for current in it {
+		if previous.is_none() {
+			previous = Some(current);
+			continue;
+		}
+		if previous == Some(current) {
+			out = Ordering::Equal;
+		}
+	}
+	out
 }
 
 #[cfg(test)]
