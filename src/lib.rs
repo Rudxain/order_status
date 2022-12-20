@@ -28,18 +28,25 @@
 
 use core::fmt;
 
+/// All possible sorting states of a sequence of values.
+///
+/// - `Undefined` should be used when no comparisons are possible
+/// - `Equal` must be used if all values are considered "the same"
+/// - `Ascending` and `Descending` are self-explanatory
+/// - `Unsorted` should be used if the comparison fn couldn't recognize an ordering,
+/// or when the sequence has an arbitrary or random order
 #[derive(Debug, PartialEq, Eq)]
 pub enum Ordering {
 	/// unknown
 	Undefined,
 	/// (`Ascending` && `Descending`) || same || uniform || homogeneous
 	Equal,
-	/// previous <= next
+	/// increasing || previous <= next
 	Ascending,
-	/// previous >= next
+	/// decreasing || previous >= next
 	Descending,
 	/// unordered
-	Unsorted,
+	Unsorted, // avoid collision with `Option::None`
 }
 impl fmt::Display for Ordering {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -53,6 +60,9 @@ impl fmt::Display for Ordering {
 	}
 }
 
+/// Uses `PartialOrd` trait to determine the ordering of a generic slice.
+///
+/// Returns `Ordering::Undefined` if `a.len() < 2`.
 pub fn get_ordering<T: core::cmp::PartialOrd>(a: &[T]) -> Ordering {
 	if a.len() < 2 {
 		return Ordering::Undefined;
