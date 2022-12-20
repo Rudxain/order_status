@@ -26,12 +26,12 @@
 )]
 
 #[allow(clippy::enum_glob_use)]
-use ordering_status::get_order;
+use ordering_status::get_ordering;
 
 fn main() {
 	println!(
 		"{}",
-		get_order(
+		get_ordering(
 			&std::env::args()
 				.skip(1)
 				.map(|s| s.parse::<f64>().unwrap())

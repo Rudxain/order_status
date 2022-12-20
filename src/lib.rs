@@ -38,22 +38,22 @@ pub enum Ordering {
 	Ascending,
 	/// previous >= next
 	Descending,
-	/// unordered || unsorted
-	None,
+	/// unordered
+	Unsorted,
 }
 impl fmt::Display for Ordering {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
-			Self::Undefined => write!(f, "unknown ordering"),
+			Self::Undefined => write!(f, "undefined"),
 			Self::Equal => write!(f, "equal"),
 			Self::Ascending => write!(f, "ascending"),
 			Self::Descending => write!(f, "descending"),
-			Self::None => write!(f, "unordered")
+			Self::Unsorted => write!(f, "unsorted")
 		}
 	}
 }
 
-pub fn get_order<T: core::cmp::PartialOrd>(a: &[T]) -> Ordering {
+pub fn get_ordering<T: core::cmp::PartialOrd>(a: &[T]) -> Ordering {
 	if a.len() < 2 {
 		return Ordering::Undefined;
 	}
@@ -66,7 +66,7 @@ pub fn get_order<T: core::cmp::PartialOrd>(a: &[T]) -> Ordering {
 	if a.windows(2).all(|w| w[0] >= w[1]) {
 		return Ordering::Descending;
 	}
-	Ordering::None
+	Ordering::Unsorted
 }
 
 #[cfg(test)]
@@ -76,25 +76,25 @@ mod tests {
 
 	#[test]
 	fn undef_works() {
-		assert_eq!(get_order::<u8>(&[]), Ordering::Undefined);
-		assert_eq!(get_order(&[0]), Ordering::Undefined);
+		assert_eq!(get_ordering::<u8>(&[]), Ordering::Undefined);
+		assert_eq!(get_ordering(&[0]), Ordering::Undefined);
 	}
 
 	#[test]
 	fn eq_works() {
-		assert_eq!(get_order(&[69; 69]), Ordering::Equal);
+		assert_eq!(get_ordering(&[69; 69]), Ordering::Equal);
 	}
 	#[test]
 	fn asc_works() {
-		assert_eq!(get_order(&[-2, -1, 0, 1, 2]), Ordering::Ascending);
+		assert_eq!(get_ordering(&[-2, -1, 0, 1, 2]), Ordering::Ascending);
 	}
 	#[test]
 	fn des_works() {
-		assert_eq!(get_order(&[2, 1, 0, -1, -2]), Ordering::Descending);
+		assert_eq!(get_ordering(&[2, 1, 0, -1, -2]), Ordering::Descending);
 	}
 	#[test]
 	fn none_works() {
-		assert_eq!(get_order(&[0, 1, 0]), Ordering::None);
-		assert_eq!(get_order(&[-6, 1, -9, 42]), Ordering::None);
+		assert_eq!(get_ordering(&[0, 1, 0]), Ordering::Unsorted);
+		assert_eq!(get_ordering(&[-6, 1, -9, 42]), Ordering::Unsorted);
 	}
 }
