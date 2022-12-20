@@ -1,0 +1,17 @@
+[package]
+name = "order_status"
+description = "Get the ordering of a slice (ascending, descending, equal, none)"
+keywords = ["sorted", "generic"]
+categories = ["no-std", "algorithms"]
+version = "0.3.0"
+edition = "2021"
+repository = "https://github.com/Rudxain/order_status"
+documentation = "https://docs.rs/order_status"
+license = "Unlicense"
+exclude = [".*"]
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
