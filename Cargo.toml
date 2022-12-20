@@ -1,6 +1,6 @@
 [package]
 name = "ordering_status"
-description = "Get the ordering of a slice (ascending, descending, equal, none, undefined)"
+description = "Get ordering of a generic slice (ascending, descending, equal, none, undefined)"
 keywords = ["sorted", "generic"]
 categories = ["no-std", "algorithms"]
 version = "0.7.0"
