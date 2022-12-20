@@ -1,7 +1,6 @@
 #![warn(
 	unused,
 	future_incompatible,
-	clippy::unwrap_used,
 	clippy::cargo,
 	clippy::pedantic,
 	clippy::nursery,
@@ -29,7 +28,6 @@
 use order_status::get_order;
 
 fn main(){
-	#[allow(clippy::unwrap_used)]
 	let argv: Vec<f64> = std::env::args().skip(1).map(|s| s.parse::<f64>().unwrap()).collect();
-	println!("{}", get_order(&argv));
+	println!("{:?}", get_order(&argv).unwrap());
 }
