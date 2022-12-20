@@ -25,9 +25,23 @@
 	clippy::float_cmp_const
 )]
 
+use core::cmp::Ordering;
 use order_status::get_order;
 
-fn main(){
-	let argv: Vec<f64> = std::env::args().skip(1).map(|s| s.parse::<f64>().unwrap()).collect();
-	println!("{:?}", get_order(&argv).unwrap());
+fn main() {
+	println!(
+		"{}",
+		match get_order(
+			&std::env::args()
+				.skip(1)
+				.map(|s| s.parse::<f64>().unwrap())
+				.collect::<Vec<f64>>()
+		) {
+			Some(Ordering::Equal) => "equal",
+			Some(Ordering::Greater) => "ascending",
+			Some(Ordering::Less) => "descending",
+			None => "none"
+		}
+
+	);
 }
