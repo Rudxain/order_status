@@ -41,7 +41,7 @@ fn main() {
 			Some(Equal) => "equal",
 			Some(Greater) => "ascending",
 			Some(Less) => "descending",
-			None => "none",
+			None => "unordered",
 		}
 	);
 }
