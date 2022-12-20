@@ -83,18 +83,39 @@ pub fn get_ordering<T: core::cmp::PartialOrd>(a: &[T]) -> Ordering {
 ///
 /// Returns `Ordering::Undefined` if `it.count() < 2`.
 fn get_ordering_iter<T: core::cmp::PartialOrd>(
-	it: &mut /* is there some way of avoiding `mut`? */ dyn Iterator<Item = T>,
+	// is there some way of avoiding `mut`?
+	it: &mut dyn Iterator<Item = &T>,
 ) -> Ordering {
 	let mut out = Ordering::Undefined;
-	let mut previous: Option<T> = None;
+	// is `Option::None` the best way?
+	let mut previous: Option<&T> = None;
 	for current in it {
 		if previous.is_none() {
 			previous = Some(current);
 			continue;
 		}
-		if previous == Some(current) {
+		if previous == Some(current) && (out == Ordering::Undefined || out == Ordering::Equal) {
 			out = Ordering::Equal;
+			continue;
 		}
+		if previous <= Some(current)
+			&& (out == Ordering::Undefined
+				|| out == Ordering::Equal
+				|| out == Ordering::Ascending)
+		{
+			out = Ordering::Ascending;
+			continue;
+		}
+		if previous >= Some(current)
+		&& (out == Ordering::Undefined
+			|| out == Ordering::Equal
+			|| out == Ordering::Descending)
+		{
+			out = Ordering::Descending;
+			continue;
+		}
+		out = Ordering::Unsorted;
+		break;
 	}
 	out
 }
