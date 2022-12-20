@@ -1,4 +1,4 @@
-# Order Status
+# Ordering Status
 
 Get the sorted/ordering status of a generic slice
 

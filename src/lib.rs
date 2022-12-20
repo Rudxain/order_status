@@ -26,25 +26,47 @@
 	clippy::float_cmp_const
 )]
 
-use core::cmp::Ordering;
+use core::fmt;
 
-/// Returns:
-/// - `Some(Ordering::Equal)` if `a.len() < 2` or all values are the same
-/// - `Some(Ordering::Greater)` if ascending
-/// - `Some(Ordering::Less)` if descending
-/// - `None` if unordered/unsorted
-pub fn get_order<T: core::cmp::PartialOrd>(a: &[T]) -> Option<Ordering> {
-	// to-do: optimize 3n to n iters
+#[derive(Debug, PartialEq, Eq)]
+pub enum Ordering {
+	/// unknown
+	Undefined,
+	/// (`Ascending` && `Descending`) || same || uniform || homogeneous
+	Equal,
+	/// previous <= next
+	Ascending,
+	/// previous >= next
+	Descending,
+	/// unordered || unsorted
+	None,
+}
+impl fmt::Display for Ordering {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		match self {
+			Self::Undefined => write!(f, "unknown ordering"),
+			Self::Equal => write!(f, "equal"),
+			Self::Ascending => write!(f, "ascending"),
+			Self::Descending => write!(f, "descending"),
+			Self::None => write!(f, "unordered")
+		}
+	}
+}
+
+pub fn get_order<T: core::cmp::PartialOrd>(a: &[T]) -> Ordering {
+	if a.len() < 2 {
+		return Ordering::Undefined;
+	}
 	if a.windows(2).all(|w| w[0] == w[1]) {
-		return Some(Ordering::Equal);
+		return Ordering::Equal;
 	}
 	if a.windows(2).all(|w| w[0] <= w[1]) {
-		return Some(Ordering::Greater);
+		return Ordering::Ascending;
 	}
 	if a.windows(2).all(|w| w[0] >= w[1]) {
-		return Some(Ordering::Less);
+		return Ordering::Descending;
 	}
-	None
+	Ordering::None
 }
 
 #[cfg(test)]
@@ -53,22 +75,26 @@ mod tests {
 	use super::*;
 
 	#[test]
+	fn undef_works() {
+		assert_eq!(get_order::<u8>(&[]), Ordering::Undefined);
+		assert_eq!(get_order(&[0]), Ordering::Undefined);
+	}
+
+	#[test]
 	fn eq_works() {
-		assert_eq!(get_order::<u8>(&[]).unwrap(), Ordering::Equal);
-		assert_eq!(get_order(&[0]).unwrap(), Ordering::Equal);
-		assert_eq!(get_order(&[69; 69]).unwrap(), Ordering::Equal);
+		assert_eq!(get_order(&[69; 69]), Ordering::Equal);
 	}
 	#[test]
 	fn asc_works() {
-		assert_eq!(get_order(&[-2, -1, 0, 1, 2]).unwrap(), Ordering::Greater);
+		assert_eq!(get_order(&[-2, -1, 0, 1, 2]), Ordering::Ascending);
 	}
 	#[test]
 	fn des_works() {
-		assert_eq!(get_order(&[2, 1, 0, -1, -2]).unwrap(), Ordering::Less);
+		assert_eq!(get_order(&[2, 1, 0, -1, -2]), Ordering::Descending);
 	}
 	#[test]
 	fn none_works() {
-		assert_eq!(get_order(&[0, 1, 0]), None);
-		assert_eq!(get_order(&[-6, 1, -9, 42]), None);
+		assert_eq!(get_order(&[0, 1, 0]), Ordering::None);
+		assert_eq!(get_order(&[-6, 1, -9, 42]), Ordering::None);
 	}
 }

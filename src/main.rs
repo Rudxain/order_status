@@ -26,22 +26,16 @@
 )]
 
 #[allow(clippy::enum_glob_use)]
-use core::cmp::Ordering::*;
-use order_status::get_order;
+use ordering_status::get_order;
 
 fn main() {
 	println!(
 		"{}",
-		match get_order(
+		get_order(
 			&std::env::args()
 				.skip(1)
 				.map(|s| s.parse::<f64>().unwrap())
 				.collect::<Vec<f64>>()
-		) {
-			Some(Equal) => "equal",
-			Some(Greater) => "ascending",
-			Some(Less) => "descending",
-			None => "unordered",
-		}
+		)
 	);
 }

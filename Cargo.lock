@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "order_status"
-version = "0.6.0"
+name = "ordering_status"
+version = "0.7.0"
